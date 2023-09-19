@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap');
 
 body {
+    font-family: 'Times New Roman', Times, serif;
     font-family: 'Roboto', sans-serif;
     text-align: center;
 }
@@ -8,12 +10,17 @@ body {
 .square {
     background-color: blue;
     font-size: 200%;
+    cursor: pointer;
+}
+
+.square:hover {
+    transform: scale(1.05);
 }
 
 #main-game {
     /* width: 60vmin;
     height: 60vmin; */
-    background-color: red;
+    /* background-color: red; */
     margin: 50px auto 0;
     display: grid;
 }
