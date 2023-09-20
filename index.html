@@ -8,7 +8,18 @@
 </head>
 <body>
     <h1 id="game-heading">Let's Play Tic Tac Toe!</h1>
-    <div class="div" id="main-game">
+    <div class="div" id="main-game"></div>
+    <div>
+
+        <label for="grid-size">Width of Grid:</label>
+        <input type="number" id="grid-size" name="grid-size" min="2" max="20" value="3"/>
+    </div>
+    <div>
+        <label for="num-to-win">Number in a row to win:</label>
+        <input type="number" id="num-to-win" name="num-to-win" min="2" max="20" value="3"/>
+    </div>
+    <button id="start-game">(Re)start Game</button>
+    
     
     <script src="app.js"></script>
 </body>

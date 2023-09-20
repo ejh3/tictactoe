@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap');
 
 body {
     font-family: 'Times New Roman', Times, serif;
@@ -8,19 +7,41 @@ body {
 }
 
 .square {
-    background-color: blue;
-    font-size: 200%;
+    background-color: #eee;
+    /* font-size: 200%; */
     cursor: pointer;
+    /* make squares glow! */
+    transition: all 0.2s ease-in-out;
 }
 
 .square:hover {
-    transform: scale(1.05);
+    background-color: #ddd;
 }
 
 #main-game {
-    /* width: 60vmin;
-    height: 60vmin; */
-    /* background-color: red; */
-    margin: 50px auto 0;
+    width: 60vmin;
+    height: 60vmin;
+    margin: 50px auto 20px;
     display: grid;
+}
+
+input[type="number"] {
+    width: 40px;
+    height: 25px;
+    font-size: 100%;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    background-color: #eee;
+    margin: 5px 10px;
+}
+
+button {
+    padding: 0 15px;
+    height: 30px;
+    font-size: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color: #eee;
+    margin: 5px 10px;
 }
