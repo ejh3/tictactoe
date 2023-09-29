@@ -1,34 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 :root {
-    --p1-color: purple;
-    --p2-color: teal;
+    /* --p1-color: purple; */
+    --p1-color: #f00;
+    /* --p2-color: teal; */
+    --p2-color: #00f;
+    --p1: X;
+    --p2: O;
     --board-width: 80vmin;
 }
-
-body > * {
-    flex-shrink: 0;
-  }
+  
 html, body {
     margin: 0;
     padding: 0;
 }
+
 body {
     font-family: 'Roboto', sans-serif;
     font-size: 100%;
     text-align: center;
-    box-shadow:
+    /* box-shadow:
         inset -100px 0px 6vmin -100px red,
-        inset 100px 0px 6vmin -100px red;
+        inset 100px 0px 6vmin -100px red; */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    font-size: 2.5vmin;
 }
 
 h1 {
     margin: 0;
     padding: 15px;
     font-size: 5vmin;
+}
+
+
+#main-game {
+    width: var(--board-width);
+    height: var(--board-width);
+    margin: 20px auto 20px;
+    display: grid;
+    border-radius: 25px;
+    padding: 0px;
 }
 
 .square {
@@ -44,13 +57,19 @@ h1 {
     background-color: #ddd;
 }
 
-#main-game {
-    width: var(--board-width);
-    height: var(--board-width);
-    margin: 20px auto 20px;
-    display: grid;
-    border-radius: 25px;
-    padding: 0px;
+.square:not([player=""]) {
+    background: #ddd;
+}
+
+.square[player="1"] {
+    color: var(--p1-color);
+    box-shadow: 0 0 calc(0.1em + 2px) var(--p1-color);
+    transform: scale(1.0);
+}
+.square[player="2"] {
+    color: var(--p2-color);
+    box-shadow: 0 0 calc(0.1em + 2px) var(--p2-color);
+    transform: scale(1.0);
 }
 
 #options {
@@ -60,13 +79,14 @@ h1 {
     margin: 20px auto 20px;
     border-radius: 25px;
     padding: 10px;
+    box-sizing: border-box;
 }
 
 @media (orientation: portrait) {
     #options {
         flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
+        justify-content: top;
+        align-items: stretch;
     }
 }
 
@@ -79,25 +99,41 @@ h1 {
 }
 
 .option {
-    background-color: aqua;
+    /* background-color: aqua; */
     flex: 1 1 0;
-    width: 0;
+    margin: 10px 10px;
+    text-align: left;
 }
 
 input[type="number"] {
-    width: 40px;
-    height: 25px;
+    width: 5vmin;
+    padding: 5px 15px;
     text-align: center;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     background-color: #fff;
     margin: 5px 10px;
+    font-size: 2.5vmin;
 }
 
 button {
-    padding: 10px 15px;
+    padding: 15px 20px;
+    /* width: 200px; */
+    display: block;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     background-color: #fff;
-    margin: 5px 5px;
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 2.5vmin;
 }
+
+
+
+td{
+    white-space: nowrap;  /** added **/
+}
+/* 
+table td:last-child{
+    width:100%;
+} */

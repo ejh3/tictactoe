@@ -2,38 +2,50 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
-    <link rel="stylesheet" href="app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="app.css">
 </head>
 
 <body>
-    <h1 id="game-heading">Let's Play Tic Tac Toe!</h1>
-    <div id="main-game"></div>
-    <div id="options">
-        <div class="option">
-            <button id="tictactoe">Tic Tac Toe</button>
-        </div>
-        <div class="option">
-            <button id="gomoku">Gomoku</button>
-        </div>
-        <div class="option">
-            <button id="start-game">Custom Game</button>
-            <div>
-                <input type="number" id="grid-size" name="grid-size" min="2" max="20" value="3" />
-                <label for="grid-size">grid</label>
-            </div>
-            <div>
-                <input type="number" id="num-to-win" name="num-to-win" min="2" max="20" value="3" />
-                <label for="num-to-win">to win</label>
-            </div>
-        </div>
+  <h1 id="game-heading">Let's Play Tic Tac Toe!</h1>
+  <div id="main-game"></div>
+  <div id="options">
+    <div class="option">
+      <button id="tictactoe">Tic Tac Toe</button>
     </div>
+    <div class="option">
+      <button id="fiveinarow">5-In-A-Row</button>
+    </div>
+    <div class="option">
+      <table>
+        <tr>
+          <td><label for="grid-size">Grid Size:</label></td>
+          <td>
+            <input type="number" id="grid-size" name="grid-size" value="3">
+          </td>
+        </tr>
+        <tr>
+          <td><label for="num-to-win">To Win:</label></td>
+          <td>
+            <input type="number" id="num-to-win" name="num-to-win" value="3">
+          </td>
+        </tr>
+      </table>
+      <div>
+
+
+      </div>
+      <div>
+
+      </div>
+    </div>
+  </div>
 
 
 
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>

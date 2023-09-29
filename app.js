@@ -1,138 +1,203 @@
-const P1 = "X";
-const P2 = "O";
+// Constants
 const GAP = 0.1; // as a percentage of square size
-const WIDTH = Number(getComputedStyle(document.documentElement).getPropertyValue('--board-width').slice(0, -4));
-console.log(WIDTH)
-const P1_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--p1-color');
-const P2_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--p2-color');
-let n, toWin;
-let squares, state, numPlayed;
+const MAX_WIDTH = 20; // in board squares
+const MIN_WIDTH = 1; // in board squares
+const STYLE = getComputedStyle(document.documentElement);
+const WIDTH = Number(STYLE.getPropertyValue('--board-width').slice(0, -4)); // vmin sliced off
+const P1 = STYLE.getPropertyValue('--p1');
+const P2 = STYLE.getPropertyValue('--p2');
+const P1_COLOR = STYLE.getPropertyValue('--p1-color');
+const P2_COLOR = STYLE.getPropertyValue('--p2-color');
+
+// Global variables
+let gridSize, toWin;
+let squares, numPlayed;
 let currentPlayer, gameOver;
 
-game = document.getElementById("main-game");
-heading = document.getElementById("game-heading");
+// DOM elements
+const body = document.getElementsByClassName("body")[0];
+const game = document.getElementById("main-game");
+const heading = document.getElementById("game-heading");
+const gridSizeInput = document.getElementById("grid-size");
+const toWinInput = document.getElementById("num-to-win");
 
 
-document.getElementById("start-game").addEventListener("click", () => {
-    console.log("Starting game");
-    initBoard();
-    heading.textContent = currentPlayer + "'s turn";
+// add max attribute to input fields
+gridSizeInput.max = MAX_WIDTH;
+toWinInput.max = MAX_WIDTH;
+
+// enforce limits on input fields and ensure toWin <= gridSize
+gridSizeInput.addEventListener('input', (event) => {
+  let newGridSize = event.target.valueAsNumber;
+  if (newGridSize > MAX_WIDTH) {
+    gridSizeInput.value = MAX_WIDTH;
+  } else if (newGridSize < MIN_WIDTH) {
+    gridSizeInput.value = MIN_WIDTH;
+  } else {
+    gridSizeInput.value = newGridSize;
+  }
+
+  if (gridSizeInput.value < toWin) {
+    toWinInput.value = gridSizeInput.value;
+  }
+  initBoard(); // will update gridSize and toWin
+  console.log(`n changed to: ${newValue}`);
 });
 
+toWinInput.addEventListener('input', (event) => {
+  let newToWin = event.target.valueAsNumber;
+  if (newToWin > MAX_WIDTH) {
+    toWinInput.value = MAX_WIDTH;
+  } else if (newToWin < MIN_WIDTH) {
+    toWinInput.value = MIN_WIDTH;
+  } else {
+    toWinInput.value = newToWin;
+  }
+
+  if (toWinInput.value > gridSize) {
+    gridSizeInput.value = toWinInput.value;
+  } 
+  initBoard(); // will update gridSize and toWin
+  console.log(`toWin changed to: ${toWin}`);
+});
+
+
+// buttons for board presets
+document.getElementById("tictactoe").addEventListener("click", () => {
+  toWinInput.value = 3;
+  gridSizeInput.value = 3;
+  initBoard();
+});
+
+document.getElementById("fiveinarow").addEventListener("click", () => {
+  toWinInput.value = 5;
+  gridSizeInput.value = 15;
+  initBoard();
+});
+
+
+// Initialize board without user input
 initBoard();
 
 
+
+/********************** FUNCTIONS **********************/
+
 function initBoard() {
-    // clear board
-    while (game.firstChild) {
-        game.removeChild(game.firstChild);
-    }
-    squares = [];
-    state = [];
+  // clear board
+  while (game.firstChild) {
+    game.removeChild(game.firstChild);
+  }
+  squares = [];
+  // initialize board variables
+  numPlayed = 0; // for sensing a draw
+  currentPlayer = 1;
+  gameOver = false;
 
-    // initialize board variables
-    numPlayed = 0; // for sensing a draw
-    currentPlayer = P1;
-    gameOver = false;
+  // get board size and number in a row to win from input
+  gridSize = gridSizeInput.valueAsNumber;
+  toWin = toWinInput.valueAsNumber;
+  console.log(`Creating board with n=${gridSize}, toWin=${toWin}`);
 
-    // get board size and number in a row to win from input
-    n = document.getElementById("grid-size").valueAsNumber;
-    toWin = document.getElementById("num-to-win").valueAsNumber;
-    console.log(`Creating board with n=${n}, toWin=${toWin}`);
+  // set grid template columns and rows
+  let squareSize = (WIDTH - (gridSize - 1) * GAP) / gridSize;
+  game.style.gridTemplateColumns = "1fr ".repeat(gridSize);
+  game.style.gridTemplateRows = "1fr ".repeat(gridSize);
+  game.style.gap = GAP * squareSize + "vmin";
 
-    // set grid template columns and rows
-    let squareSize = (WIDTH - (n - 1) * GAP) / n;
-    game.style.gridTemplateColumns = "1fr ".repeat(n);
-    game.style.gridTemplateRows = "1fr ".repeat(n);
-    game.style.gap = GAP * squareSize + "vmin";
-
-    // create n^2 divs and append them to the game div
-    for (let i = 0; i < n; i++) {
-        squares[i] = [];
-        state[i] = [];
-        for (let j = 0; j < n; j++) {
-            let div = document.createElement("div");
-            div.style.lineHeight = (WIDTH - (n - 1) * GAP * squareSize) / n + "vmin";
-            div.style.fontSize = (WIDTH - (n - 1) * GAP * squareSize) / n + "vmin";
-            div.classList.add("square");
-            div.addEventListener("click", () => {
-                if (!gameOver) {
-                    handleSquareClick(i, j);
-                }
-            });
-            div.addEventListener("mouseenter", () => {
-                if (state[i][j] == "" && !gameOver) {
-                    div.style.transform = "scale(1.05)";
-                }
-            });
-            div.addEventListener("mouseleave", () => {
-                div.style.transform = "scale(1.0)";
-            });
-            game.appendChild(div);
-
-            squares[i][j] = div;
-            state[i][j] = "";
+  // create n^2 divs and append them to the game div
+  for (let i = 0; i < gridSize; i++) {
+    squares[i] = [];
+    for (let j = 0; j < gridSize; j++) {
+      let div = document.createElement("div");
+      div.style.lineHeight = (WIDTH - (gridSize - 1) * GAP * squareSize) / gridSize + "vmin";
+      div.style.fontSize = (WIDTH - (gridSize - 1) * GAP * squareSize) / gridSize + "vmin";
+      div.classList.add("square");
+      div.addEventListener("click", () => {
+        handleSquareClick(i, j);
+      });
+      div.addEventListener("mouseenter", (event) => {
+        if (event.target.getAttribute("player") == "" && !gameOver) {
+          div.style.transform = "scale(1.05)";
+          div.style.boxShadow = `0 0 calc(0.1em + 2px) ${(currentPlayer === 1 ? P1_COLOR : P2_COLOR)}`;
         }
+      });
+      div.addEventListener("mouseleave", (event) => {
+        div.style.transform = "scale(1.0)";
+        if (event.target.getAttribute("player") == "") {
+          div.style.boxShadow = "none"
+        }
+      });
+      div.setAttribute("player", "");
+      game.appendChild(div);
+
+      squares[i][j] = div;
     }
+  }
+
+  heading.textContent = (currentPlayer == 1 ? P1 : P2) + "'s turn";
 }
 
 // Handles a click on the square at (i, j), updating the internal state and the UI appropriately
 function handleSquareClick(i, j) {
-    if (state[i][j] == "") { // ignore attempts to play on a square that's already been played
-        numPlayed += 1;
-        state[i][j] = currentPlayer;
-        squares[i][j].textContent = currentPlayer;
-        squares[i][j].style.color = currentPlayer === P1 ? P1_COLOR : P2_COLOR;
-        squares[i][j].style.boxShadow = `0 0 calc(0.15em + 2px) ` + (currentPlayer === P1 ? P1_COLOR : P2_COLOR);
-        //game.style.boxShadow = `0 0 5vmin ` + (currentPlayer === P1 ? "r" : "blue");
-        squares[i][j].style.backgroundColor = "#ddd";
-        squares[i][j].style.zIndex = numPlayed*10;
-        if (hasWonAt(i, j)) {
-            heading.textContent = currentPlayer + " wins!";
-            gameOver = true;
-        } else if (numPlayed === n * n) {
-            heading.textContent = "It's a draw!";
-            gameOver = true;
-        }
-        else {
-            currentPlayer = currentPlayer === P1 ? P2 : P1; // switch to the next player
-            heading.textContent = currentPlayer + "'s turn";
-        }
-    }
+  const sq = squares[i][j];
+  // ignore clicks if the game is over or if the square is already played
+  if (gameOver || sq.getAttribute("player") != "") {
+    return;
+  }
+  numPlayed += 1;
+  sq.setAttribute("player", currentPlayer);
+  sq.textContent = (currentPlayer == 1 ? P1 : P2);
+  sq.style.zIndex = numPlayed * 10;
+  if (hasWonAt(i, j)) {
+    heading.textContent = (currentPlayer == 1 ? P1 : P2) + " wins!";
+    gameOver = true;
+  } else if (numPlayed === gridSize * gridSize) {
+    heading.textContent = "It's a draw!";
+    gameOver = true;
+  }
+  else {
+    currentPlayer = (currentPlayer) % 2 + 1; // switch to the next player
+    // document.body.style.backgroundColor = (currentPlayer === 1 ? P1_COLOR : P2_COLOR);
+    document.body.style.boxShadow = 
+      `inset -100px 0px 8vmin -115px ${currentPlayer === 1 ? P1_COLOR : P2_COLOR},
+      inset 100px 0px 8vmin -115px ${currentPlayer === 1 ? P1_COLOR : P2_COLOR}`;
+
+    // document.body.style.backgroundImage = `linear-gradient(to top, ${currentPlayer === 1 ? P1_COLOR : P2_COLOR} 10%, white 60%)`;
+    heading.textContent = (currentPlayer == 1 ? P1 : P2) + "'s turn";
+  }
 }
 
 // Checks for a win (toWin of either P1 or P2 in a contiguous line) at the given square
 function hasWonAt(i, j) {
-    let player = state[i][j];
-    const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  let player = squares[i][j].getAttribute("player");
+  const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
 
-    // Checks forwards and backwards in all four directions from (i,j)
-    for (const dir of directions) {
-        count = -1; // -1 to avoid double counting [i, j]
-        for (let reverse = 1; reverse >= -1; reverse -= 2) {
-            // iterate in the current direction, staying within bounds and reversing direction
-            // if out of bounds or if the square is not the current player's
-            for (let k = 0;
-                0 <= (row = i + reverse * k * dir[0]) && row < n && 
-                0 <= (col = j + reverse * k * dir[1]) && col < n;
-                k++) {
+  // Checks forwards and backwards in all four directions from (i,j)
+  for (const dir of directions) {
+    count = -1; // -1 to avoid double counting [i, j]
+    for (let reverse = 1; reverse >= -1; reverse -= 2) {
+      // iterate in the current direction, staying within bounds and reversing direction
+      // if out of bounds or if the square is not the current player's
+      for (let k = 0;
+        0 <= (row = i + reverse * k * dir[0]) && row < gridSize &&
+        0 <= (col = j + reverse * k * dir[1]) && col < gridSize;
+        k++) {
 
-                if (state[row][col] === player) {
-                    count += 1;
-                    if (count === toWin) {
-                        console.log(`Player ${player} wins with ${count} in a row!`);
-                        return true;
-                    }
-                } else {
-                    break;
-                }
-
-
-            }
+        if (squares[row][col].getAttribute("player") === player) {
+          count += 1;
+          if (count === toWin) {
+            console.log(`Player ${player} wins with ${count} in a row!`);
+            return true;
+          }
+        } else {
+          break;
         }
-        console.log(`Player ${player} has ${count}/${toWin} in a row at ${i}, ${j}`)
+      }
     }
-    return false;
+    console.log(`Player ${player} has ${count}/${toWin} in a row at ${i}, ${j}`)
+  }
+  return false;
 }
 
 
