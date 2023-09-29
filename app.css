@@ -1,17 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
+:root {
+    --p1-color: purple;
+    --p2-color: teal;
+    --board-width: 80vmin;
+}
+
+body > * {
+    flex-shrink: 0;
+  }
+html, body {
+    margin: 0;
+    padding: 0;
+}
 body {
-    font-family: 'Times New Roman', Times, serif;
     font-family: 'Roboto', sans-serif;
+    font-size: 100%;
     text-align: center;
+    box-shadow:
+        inset -100px 0px 6vmin -100px red,
+        inset 100px 0px 6vmin -100px red;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1 {
+    margin: 0;
+    padding: 15px;
+    font-size: 5vmin;
 }
 
 .square {
     background-color: #eee;
-    /* font-size: 200%; */
     cursor: pointer;
-    /* make squares glow! */
-    transition: all 0.2s ease-in-out;
+    transition:
+        box-shadow 0.3s ease-in-out,
+        transform 0.2s ease-in-out;
+    border-radius: 8%;
 }
 
 .square:hover {
@@ -19,29 +45,59 @@ body {
 }
 
 #main-game {
-    width: 60vmin;
-    height: 60vmin;
-    margin: 50px auto 20px;
+    width: var(--board-width);
+    height: var(--board-width);
+    margin: 20px auto 20px;
     display: grid;
+    border-radius: 25px;
+    padding: 0px;
+}
+
+#options {
+    background: #eee;
+    display: flex;
+    width: 80vmin;
+    margin: 20px auto 20px;
+    border-radius: 25px;
+    padding: 10px;
+}
+
+@media (orientation: portrait) {
+    #options {
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+
+@media (orientation: landscape) {
+    #options {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+
+.option {
+    background-color: aqua;
+    flex: 1 1 0;
+    width: 0;
 }
 
 input[type="number"] {
     width: 40px;
     height: 25px;
-    font-size: 100%;
     text-align: center;
     border: none;
     border-radius: 5px;
-    background-color: #eee;
+    background-color: #fff;
     margin: 5px 10px;
 }
 
 button {
-    padding: 0 15px;
-    height: 30px;
-    font-size: 100%;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
-    background-color: #eee;
-    margin: 5px 10px;
+    background-color: #fff;
+    margin: 5px 5px;
 }
